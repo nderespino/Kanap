@@ -18,7 +18,10 @@ fetch("//localhost:3000/api/products/" + productId)
   .then((response) => {
     console.log("response", response);
     const itemContainer = document.querySelector('.item');
-    const item = `<section class="item">
+    
+   
+    
+  const item = `<section class="item">
           <article>
             <div class="item__img">
               <img src=${response.imageUrl} alt=${response.altTxt}>
@@ -40,8 +43,7 @@ fetch("//localhost:3000/api/products/" + productId)
                   <label for="color-select">Chose your color:</label>
                   <select name="color-select" id="colors">
                       <option value="">--Please, select a color --</option>
-                     <option value="vert">${response.colors[0]}</option>
-                      <option value="blanc">${response.colors[1]}</option> 
+                    
                   </select>
                 </div>
 
@@ -58,7 +60,17 @@ fetch("//localhost:3000/api/products/" + productId)
             </div>
           </article>
         </section>`;
-        itemContainer.innerHTML += item;
+        itemContainer.innerHTML = item;
+
+        let select = document.getElementById('colors');
+        for (let i = 0; i < response.colors.length; i++) {
+          let optn = response.colors[i];
+          let el = document.createElement('option');
+          el.textContent= optn;
+          el.value = optn;
+          select.appendChild(el);
+          
+        }
     }
   )
   .catch((err) => console.error("error", err));
@@ -80,3 +92,6 @@ try {
 
 
 }
+
+
+

@@ -62,18 +62,64 @@ fetch("//localhost:3000/api/products/" + productId)
         </section>`;
         itemContainer.innerHTML = item;
 
-        let select = document.getElementById('colors');
+        let colorInput = document.getElementById('colors');
         for (let i = 0; i < response.colors.length; i++) {
           let optn = response.colors[i];
           let el = document.createElement('option');
           el.textContent= optn;
           el.value = optn;
-          select.appendChild(el);
+          colorInput.appendChild(el);
           
         }
+/* pushing product information to array after add to cart button is clicked
+-- colors variable already established above --  */
+
+let quantityInput = document.getElementById('quantity')
+
+function setInput() {
+  let cartArray = [];
+localStorage.setItem("quantity", quantityInput.value);
+localStorage.setItem("colors", colorInput.value);
+let colorValue = colorInput.value;
+let quantityValue = quantityInput.value
+cartArray.push(quantityValue, colorValue);
+
+console.log(cartArray);
+}
+
+function getInput(){
+  let storedColors = localStorage.getItem("colors");
+  let storedQuantity = localStorage.getItem("quantity");
+}
+
+
+let cartButton = document.getElementById("addToCart");
+
+cartButton.addEventListener("click", (event) => {
+setInput();
+
+});
+
+
     }
   )
   .catch((err) => console.error("error", err));
+
+/* things to do to add product to cart --
+get the data from the color and quantity elements,
+if the color is the same for each add to array with the same color
+if the color is different add to cart seperately,
+pull just the product id and color and quantity.
+
+-- how to do this? --
+
+function that adds event listener to click on add to cart 
+takes both color and quantity elements.
+add new item to array when item is added for the first time
+if color is the same simply increase the quanitity of the product
+get dom element for button id = addToCart
+
+*/
 
 
 

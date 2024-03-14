@@ -8,20 +8,16 @@ let itemQuantity = document.getElementById('quantity'); */
 let productIdUrl = window.location.search;
 
 let urlParams = new URLSearchParams(productIdUrl);
-let productId = urlParams.get('id');
+let productId = urlParams.get("id");
 console.log("product id:", productId);
-
-
 
 fetch("//localhost:3000/api/products/" + productId)
   .then((response) => response.json())
   .then((response) => {
     console.log("response", response);
-    const itemContainer = document.querySelector('.item');
-    
-   
-    
-  const item = `<section class="item">
+    const itemContainer = document.querySelector(".item");
+
+    const item = `<section class="item">
           <article>
             <div class="item__img">
               <img src=${response.imageUrl} alt=${response.altTxt}>
@@ -60,49 +56,70 @@ fetch("//localhost:3000/api/products/" + productId)
             </div>
           </article>
         </section>`;
-        itemContainer.innerHTML = item;
+    itemContainer.innerHTML = item;
 
-        let colorInput = document.getElementById('colors');
-        for (let i = 0; i < response.colors.length; i++) {
-          let optn = response.colors[i];
-          let el = document.createElement('option');
-          el.textContent= optn;
-          el.value = optn;
-          colorInput.appendChild(el);
-          
-        }
-/* pushing product information to array after add to cart button is clicked
+    let colorInput = document.getElementById("colors");
+    for (let i = 0; i < response.colors.length; i++) {
+      let optn = response.colors[i];
+      let el = document.createElement("option");
+      el.textContent = optn;
+      el.value = optn;
+      colorInput.appendChild(el);
+    }
+
+    function setCart(newCart) {
+      localStorage.setItem("cart", JSON.stringify(newCart));
+    }
+
+    function getCart() {
+      try {
+        return JSON.parse(localStorage.getItem("cart"));
+      } catch {
+        return [];
+      }
+    }
+    /* pushing product information to array after add to cart button is clicked
 -- colors variable already established above --  */
 
-let quantityInput = document.getElementById('quantity')
+    let quantityInput = document.getElementById("quantity");
+    let cart = getCart();
+    function setInput() {
+      let newItem = {
+        id: productId,
+        color: colorInput.value,
+        quantity: quantityInput.value,
+      };
 
-function setInput() {
-  let cartArray = [];
-localStorage.setItem("quantity", quantityInput.value);
-localStorage.setItem("colors", colorInput.value);
-let colorValue = colorInput.value;
-let quantityValue = quantityInput.value
-cartArray.push(quantityValue, colorValue);
+      function sameColor(item) {
+        return item.color === newItem.color && item.id === newItem.id;
+      }
 
-console.log(cartArray);
-}
+      function cartFilter(item) {
+        return item.color !== newItem.color || item.id !== newItem.id;
+      }
 
-function getInput(){
-  let storedColors = localStorage.getItem("colors");
-  let storedQuantity = localStorage.getItem("quantity");
-}
-
-
-let cartButton = document.getElementById("addToCart");
-
-cartButton.addEventListener("click", (event) => {
-setInput();
-
-});
-
-
+      let colorTest = cart.find(sameColor);
+      console.log(colorTest);
+      if (colorTest) {
+       cart = cart.filter(cartFilter);
+       newItem = {
+        ...colorTest,
+        quantity: Number(newItem.quantity) + Number(colorTest.quantity),
+       }
+      }
+        cart.push(newItem);
+    
+      
+      setCart(cart);
+      console.log(cart);
     }
-  )
+
+    let cartButton = document.getElementById("addToCart");
+
+    cartButton.addEventListener("click", (event) => {
+      setInput();
+    });
+  })
   .catch((err) => console.error("error", err));
 
 /* things to do to add product to cart --
@@ -120,24 +137,3 @@ if color is the same simply increase the quanitity of the product
 get dom element for button id = addToCart
 
 */
-
-
-
-
-function setCart(newCart){
-
-localStorage.setItem('cart', JSON.stringify(newCart));
-}
-
-function getCart(){
-try {
-    return JSON.parse(localStorage.getItem('cart'));
-}catch {
-    return [];
-}
-
-
-}
-
-
-

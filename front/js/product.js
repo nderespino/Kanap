@@ -83,39 +83,45 @@ fetch("//localhost:3000/api/products/" + productId)
 
     let quantityInput = document.getElementById("quantity");
     let cart = getCart();
+    // set input function makes new item object with products id, color, and quantity
     function setInput() {
       let newItem = {
         id: productId,
         color: colorInput.value,
         quantity: quantityInput.value,
       };
-
+// checking the color and id of new item and comparing them to all the items in the cart
       function sameColor(item) {
         return item.color === newItem.color && item.id === newItem.id;
       }
-
+// to filter out any items that match both id and color by including items that dont match color or id
       function cartFilter(item) {
         return item.color !== newItem.color || item.id !== newItem.id;
       }
+//using callback to find first match in the cart if there is one will return object or undefined
+      let foundItem = cart.find(sameColor);
+      
 
-      let colorTest = cart.find(sameColor);
-      console.log(colorTest);
-      if (colorTest) {
+      /*if there was a match we return an array of all non-matches then spread the found Item so it is not
+       mutatable then set new quantity to the sum of both objects (original and found)*/
+      if (foundItem) {
        cart = cart.filter(cartFilter);
        newItem = {
-        ...colorTest,
-        quantity: Number(newItem.quantity) + Number(colorTest.quantity),
+        ...foundItem,
+        quantity: Number(newItem.quantity) + Number(foundItem.quantity),
        }
       }
+
+      //push new item object regardless of if it was changed or not from if statement
         cart.push(newItem);
     
-      
+      //update cart
       setCart(cart);
       console.log(cart);
     }
 
     let cartButton = document.getElementById("addToCart");
-
+//event listener for add to cart button calling setInput function
     cartButton.addEventListener("click", (event) => {
       setInput();
     });

@@ -67,40 +67,56 @@ fetch("//localhost:3000/api/products/" + productId)
       colorInput.appendChild(el);
     }
 
+    /* pushing product information to array after add to cart button is clicked
+-- colors variable already established above --  */
+
     function setCart(newCart) {
       localStorage.setItem("cart", JSON.stringify(newCart));
     }
 
-    function getCart() {
-      try {
-        return JSON.parse(localStorage.getItem("cart"));
-      } catch {
-        return [];
-      }
-    }
-    /* pushing product information to array after add to cart button is clicked
--- colors variable already established above --  */
+    function getCart () {
+      let cart = localStorage.getItem('cart'); // grab cart from local storage (will either be a string or null)
+      if (cart) { // check if a chart was returned from local Storage
+        try {
+          cart = JSON.parse(cart); // try parsing the cart from localStorage
+          return cart; // if cart array was successfully parsed, return it
+        } catch {
+          return []; // if JSON.parse threw an error, return an empty cart array
+        }
+      } else {
+        return []; // if no cart was in localStorage, return an empty cart array
+     }
+   }
 
     let quantityInput = document.getElementById("quantity");
     let cart = getCart();
+    console.log(cart);
     // set input function makes new item object with products id, color, and quantity
     function setInput() {
       let newItem = {
         id: productId,
         color: colorInput.value,
-        quantity: Number(quantityInput.value),
+        quantity: quantityInput.value,
       };
+
+      console.log(newItem);
+      
 // checking the color and id of new item and comparing them to all the items in the cart
       function sameColor(item) {
         return item.color === newItem.color && item.id === newItem.id;
       }
+
+      let testColor = sameColor(item);
+      console.log(testColor);
+
+      
 // to filter out any items that match both id and color by including items that dont match color or id
       function cartFilter(item) {
         return item.color !== newItem.color || item.id !== newItem.id;
       }
 //using callback to find first match in the cart if there is one will return object or undefined
       let foundItem = cart.find(sameColor);
-      
+     
 
       /*if there was a match we return an array of all non-matches then spread the found Item so it is not
        mutatable then set new quantity to the sum of both objects (original and found)*/
@@ -113,7 +129,7 @@ fetch("//localhost:3000/api/products/" + productId)
       }
 
       //push new item object regardless of if it was changed or not from if statement
-        cart.push(newItem);
+      cart.push(newItem);
     
       //update cart
       setCart(cart);
@@ -123,7 +139,7 @@ fetch("//localhost:3000/api/products/" + productId)
     let cartButton = document.getElementById("addToCart");
 //event listener for add to cart button calling setInput function
     cartButton.addEventListener("click", (event) => {
-      setInput();
+    setInput();
     });
   })
   .catch((err) => console.error("error", err));

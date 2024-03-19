@@ -88,7 +88,7 @@ fetch("//localhost:3000/api/products/" + productId)
       let newItem = {
         id: productId,
         color: colorInput.value,
-        quantity: quantityInput.value,
+        quantity: Number(quantityInput.value),
       };
 // checking the color and id of new item and comparing them to all the items in the cart
       function sameColor(item) {

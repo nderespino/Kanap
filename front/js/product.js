@@ -57,6 +57,7 @@ fetch("//localhost:3000/api/products/" + productId)
           </article>
         </section>`;
     itemContainer.innerHTML = item;
+    console.log(response.name);
 
     let colorInput = document.getElementById("colors");
     for (let i = 0; i < response.colors.length; i++) {
@@ -94,9 +95,11 @@ fetch("//localhost:3000/api/products/" + productId)
     // set input function makes new item object with products id, color, and quantity
     function setInput() {
       let newItem = {
+        image: response.imageUrl,
+        name: response.name,
         id: productId,
         color: colorInput.value,
-        quantity: quantityInput.value,
+        quantity: Number(quantityInput.value),
       };
 
       console.log(newItem);
@@ -159,3 +162,4 @@ if color is the same simply increase the quanitity of the product
 get dom element for button id = addToCart
 
 */
+

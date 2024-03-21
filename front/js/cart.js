@@ -53,6 +53,23 @@
         </article> 
       </section>`;
        cartItemContainer.innerHTML += cartItems;
+
+
+       let deleteButton = document.querySelector(".deleteItem");
+       
+       function deleteItem() {
+        cart.pop();
+       }
+
+       
+
+       deleteButton.addEventListener("click", (event) => {
+        deleteItem();
+        });
+
+       // add event listener for delete button when button is pressed remove item from cart, 
+       // when quantity number is changed, change the total price of the item  //
+       //add total to bottom of cart adding up the quantities for every item in the cart//
    }
  }))
  .catch((err) => console.error("error", err));

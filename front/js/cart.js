@@ -47,7 +47,7 @@ for (let i = 0; i < response.length; i += 1) {
        const cartItems =  `
        <article class="cart__item" data-id=${id} data-color=${color}>
           <div class="cart__item__img">
-            <img src=${imageUrl} alt="Photo of a sofa">
+            <img src=${imageUrl} alt=${altTxt}>
           </div>
           <div class="cart__item__content">
             <div class="cart__item__content__description">
@@ -67,28 +67,36 @@ for (let i = 0; i < response.length; i += 1) {
           </div>
         </article> 
       `;
+      
        cartItemContainer.innerHTML += cartItems;
 
-       let deleteButton = document.querySelector(".cart__item__content__settings__delete");
+     
+        }
        
-       
-       //  function cartFilter(item) {
-       //   return item.color === cart.color &&  item.id === cart.id;
-       // }
-        function deleteItem(e) {
-         // cart = cart.filter();
-         const parent = e.target.closest(".cart__item");
-         console.log(parent);
-         parent.remove();
-         }
-        // remove nearest article with cart__item class to click event 
- 
-        deleteButton.addEventListener("click", deleteItem);
-       
-       }
 
- 
+        let deleteButton = document.querySelectorAll(".cart__item__content__settings__delete");
        
+        const article = document.querySelector(".cart__item");
+ 
+ 
+        console.log(article.dataset.id);
+        
+          function cartFilter() {
+           return cart.color === article.dataset.color && cart.id === article.dataset.id;
+         }
+         function deleteItem(e) {
+         cart = cart.filter(cartFilter);
+         console.log(cart);
+          const parent = e.target.closest('.cart__item');
+          console.log(parent);
+          parent.remove()
+          
+          }
+          
+         // remove nearest article with cart__item class to click event 
+         deleteButton.forEach(btn => {
+          btn.addEventListener("click", deleteItem)
+         })
         
         // delete button has to remove item from cart figure out how to remove items from the cart 
         //the button first. then link the removal to the delete button
@@ -107,6 +115,3 @@ for (let i = 0; i < response.length; i += 1) {
       //  }
         
  });
-
-
-

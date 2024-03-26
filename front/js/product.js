@@ -95,8 +95,6 @@ fetch("//localhost:3000/api/products/" + productId)
     // set input function makes new item object with products id, color, and quantity
     function setInput() {
       let newItem = {
-        image: response.imageUrl,
-        name: response.name,
         id: productId,
         color: colorInput.value,
         quantity: Number(quantityInput.value),

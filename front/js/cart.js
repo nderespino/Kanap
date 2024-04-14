@@ -31,12 +31,58 @@ for (let i = 0; i < cartIds.length; i += 1) {
     )
   );
 }
+
+function deleteItem(event) {
+  const cartItem = event.target.closest(".cart__item");
+  const itemId = cartItem.dataset.id;
+  const itemColor = cartItem.dataset.color;
+
+  // Find the index of the item to remove from cart array
+  //const cartItemFilter = cart.findIndex(item => item.id === itemId && item.color === itemColor);
+  const newCart = cart.filter(
+    (item) => !(item.id === itemId && item.color === itemColor)
+  );
+  setCart(newCart);
+
+  // Remove the cart item from the DOM
+  cartItem.remove();
+}
+
+function updateCartItemQuantity(event) {
+  const quantity = Number(event.target.value);
+  const cartItem = event.target.closest(".cart__item");
+  const itemId = cartItem.dataset.id;
+  const itemColor = cartItem.dataset.color;
+
+  // Find the corresponding item in the cart array
+  const cartItemIndex = cart.findIndex(
+    (item) => item.id === itemId && item.color === itemColor
+  );
+
+  if (cartItemIndex !== -1) {
+    // Update the quantity in the cart array
+    cart[cartItemIndex].quantity = quantity;
+
+    // Update the displayed price
+    const priceElement = cartItem.querySelector(
+      ".cart__item__content__description p:last-child"
+    );
+    const { price } = library[itemId] || {};
+    priceElement.textContent = `$${price * quantity}`;
+  }
+
+  // Update localStorage with the modified cart
+  localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+let library = {};
+
 //promise all to execute all fetches at once
 Promise.all(idFetch)
   //returns array of data responses
   .then((response) => {
     //make empty object
-    let library = {};
+   
     //saving a reference to each of the response datas onto the library, reference response without iterating response itself
     for (let i = 0; i < response.length; i += 1) {
       library[response[i]._id] = response[i];
@@ -75,66 +121,34 @@ Promise.all(idFetch)
 
       cartItemContainer.innerHTML += cartItems;
 
-      let deleteButton = document.querySelectorAll(
-        ".cart__item__content__settings__delete"
-      );
+    
 
-      function deleteItem(event) {
-        const cartItem = event.target.closest('.cart__item');
-        const itemId = cartItem.dataset.id;
-        const itemColor = cartItem.dataset.color;
-    
-        // Find the index of the item to remove from cart array
-        const cartItemFilter = cart.findIndex(item => item.id === itemId && item.color === itemColor);
-    
-        if (cartItemFilter!== -1) {
-            // Remove the item from the cart array
-            cart.splice(cartItemFilter, 1);
-    
-            // Update localStorage with the modified cart
-            localStorage.setItem('cart', JSON.stringify(cart));
-    
-            // Remove the cart item from the DOM
-            cartItem.remove();
-        }
-    }
-
-      // remove nearest article with cart__item class to click event
-      deleteButton.forEach((btn) => {
-        btn.addEventListener("click", deleteItem);
-
-      });
-      //update cart function 
-      function updateCartItemQuantity(event) {
-        const quantity = Number(event.target.value);
-        const cartItem = event.target.closest('.cart__item');
-        const itemId = cartItem.dataset.id;
-        const itemColor = cartItem.dataset.color;
-    
-        // Find the corresponding item in the cart array
-        const cartItemIndex = cart.findIndex(item => item.id === itemId && item.color === itemColor);
-    
-        if (cartItemIndex !== -1) {
-            // Update the quantity in the cart array
-            cart[cartItemIndex].quantity = quantity;
-    
-            // Update the displayed price
-            const priceElement = cartItem.querySelector('.cart__item__content__description p:last-child');
-            const { price } = library[itemId];
-            priceElement.textContent = `$${price * quantity}`;
-        }
-    
-        // Update localStorage with the modified cart
-        localStorage.setItem('cart', JSON.stringify(cart));
-    }
-    
-    // Attach event listener to quantity inputs
-    const quantityInputs = document.querySelectorAll('.itemQuantity');
-    quantityInputs.forEach(input => {
-        input.addEventListener('change', updateCartItemQuantity);
-    });
+  }
   
-    }
+  
+
+
+    let deleteButton = document.querySelectorAll(
+      ".cart__item__content__settings__delete"
+    );
+
+    const quantityInputs = document.querySelectorAll(".itemQuantity");
+
+     // remove nearest article with cart__item class to click event
+     deleteButton.forEach((btn) => {
+      btn.addEventListener("click", deleteItem);
+    });
+
+    //update cart function
+   
+
+    // Attach event listener to quantity inputs
+    
+    quantityInputs.forEach((input) => {
+      input.addEventListener("change", updateCartItemQuantity);
+    });
+
+   
 
     // delete button has to remove item from cart figure out how to remove items from the cart
     //the button first. then link the removal to the delete button
@@ -143,11 +157,41 @@ Promise.all(idFetch)
     // when quantity number is changed, change the total price of the item but need to do a
     // seperate quantity for the input on the cart page? how to do this without refreshing page? //
     //add total to bottom of cart adding up the quantities for every item in the cart//
-    //   function updatedQuantity() {
-    //  let itemQuantity = document.getElementById("quantity")
-    //  let quantityValue = itemQuantity.value;
-    //  itemQuantity.addEventListener('change', (event) => {
-    //   quantityValue.textContent = this.value;
-    //  });
-    //  }
+    function calculateTotalAmount() {
+      let total = 0;
+    
+      // Iterate through the cart array
+      for (let i = 0; i < cart.length; i++) {
+        // Add the price of each item multiplied by its quantity to the total
+        const { id, quantity } = cart[i];
+        const { price } = library[id] || {}; // Fetch the price from the library
+        total += price * quantity;
+      }
+    
+      return total;
+    }
+
+    function calculateTotalQuantity() {
+      let totalQuantity = 0;
+    
+      // Iterate through the cart array
+      for (let i = 0; i < cart.length; i++) {
+        // Add the quantity of each item to the total quantity
+        totalQuantity += cart[i].quantity;
+      }
+    
+      return totalQuantity;
+    }
+
+    let totalContainer = document.querySelector(".cart__price");
+    let totalQuantity = `
+    <p>Total (<span id="totalQuantity"><!-- 2 -->${calculateTotalQuantity()}</span>) : €<span id="totalPrice">${calculateTotalAmount()}</span></p>
+  `;
+    totalContainer.innerHTML += totalQuantity;
   });
+
+  
+
+
+
+

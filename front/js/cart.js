@@ -150,13 +150,7 @@ Promise.all(idFetch)
 
    
 
-    // delete button has to remove item from cart figure out how to remove items from the cart
-    //the button first. then link the removal to the delete button
-
-    // add event listener for delete button when button is pressed remove item from cart,
-    // when quantity number is changed, change the total price of the item but need to do a
-    // seperate quantity for the input on the cart page? how to do this without refreshing page? //
-    //add total to bottom of cart adding up the quantities for every item in the cart//
+    //function to iterate over the cart array to get total of all items price in cart
     function calculateTotalAmount() {
       let total = 0;
     
@@ -170,7 +164,7 @@ Promise.all(idFetch)
     
       return total;
     }
-
+//function to iterate over the cart array to get total quantity of items in cart
     function calculateTotalQuantity() {
       let totalQuantity = 0;
     
@@ -182,13 +176,77 @@ Promise.all(idFetch)
     
       return totalQuantity;
     }
-
+//push function returns into html to display total number of items and price 
     let totalContainer = document.querySelector(".cart__price");
     let totalQuantity = `
     <p>Total (<span id="totalQuantity"><!-- 2 -->${calculateTotalQuantity()}</span>) : €<span id="totalPrice">${calculateTotalAmount()}</span></p>
   `;
     totalContainer.innerHTML += totalQuantity;
   });
+  let orderBtn = document.getElementById('order');
+
+
+  //getting error message elements from dom
+  let firstNameError = document.getElementById('firstNameErrorMsg');
+  let lastNameError = document.getElementById('lastNameErrorMsg');
+  let addressError = document.getElementById('addressErrorMsg');
+  let cityError = document.getElementById('cityErrorMsg');
+  let emailError = document.getElementById('emailErrorMsg');
+
+
+  function validateForm(e) {
+    e.preventDefault();
+      let firstName = document.getElementById('firstName').value;
+      let lastName = document.getElementById('lastName').value;
+      let address = document.getElementById('address').value;
+      let city = document.getElementById('city').value;
+      let emailInput = document.getElementById('email').value;
+
+        // Function to validate email
+  function validateEmail(email) {
+    // Regular expression for email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+   {
+    const email = emailInput.trim();
+    if (validateEmail(email)) {
+      emailInput.classList.remove("invalid");
+      emailErrorMsg.textContent = "";
+    } else {
+      emailInput.classList.add("invalid");
+      emailErrorMsg.textContent = "Please enter a valid email address.";
+    }
+  }
+      
+      if (firstName.trim() === "" && lastName.trim() === "" && address.trim() === "" && city.trim() === "") {
+        firstNameError.innerHTML = "Please enter your first name";
+        lastNameError.innerHTML = "Please enter your last name";
+        addressError.innerHTML = "Please enter your address";
+        cityError.innerHTML = "Please enter your city";
+        emailError.innerHTML = "Please enter a valid email";
+        return false;
+      }
+     
+      return true;
+
+      
+    }
+    
+    orderBtn.addEventListener('click', validateForm);
+
+    //const formData = new FormData(this);
+
+    //fetch(this.action, {
+    //  method: this.method,
+    //  body: formData
+    //})
+
+
+    
+  
+
 
   
 

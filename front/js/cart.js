@@ -211,6 +211,7 @@ Promise.all(idFetch)
 
    
     const emailInput = email.trim();
+
     if (validateEmail(emailInput)) {
       emailErrorMsg.textContent = "";
     } else {
@@ -226,38 +227,33 @@ Promise.all(idFetch)
         cityError.innerHTML = "Please enter your city";
         return false;
       }
-     
+      
       return submitForm({firstName, lastName, address, city, email});
-
       
     }
     
     orderBtn.addEventListener('click', validateForm);
 
-    function submitForm(contact){
-      fetch("http://localhost:3000/api/order", {
-      method: "POST",
-      body: JSON.stringify({contact, products:getCart().map(p => p._id)}),
-      headers: {"Content-Type": 'application/json', Accept: 'application/json'}
-      }).catch(e => {console.log(e)})
-    }
+    function submitForm(contact) {
+      let redirectUrl = 'http://127.0.0.1:5500/front/html/confirmation.html';
     
-    //const formData = new FormData(this);
-
-    //fetch(this.action, {
-    //  method: this.method,
-    //  body: formData
-    //})
-
-
-
-
+      fetch("//localhost:3000/api/products/order", {
+  method: "POST",
+  body: JSON.stringify({ contact, products: getCart().map(p => p.id) }),
+  headers: { "Content-Type": "application/json", Accept: "application/json" },
+  redirect: "follow"
+}).then(response => {
+  if (response.redirected) {
     
-  
-
-
-  
-
-
-
-
+  } else if (response.status === 201) {
+    // Redirect after successful order creation
+    window.location.href = redirectUrl;
+  } else {
+    return response.json(); // handle response normally
+  }
+})
+.catch(error => {
+  console.error('Error:', error);
+});
+    
+} 

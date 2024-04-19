@@ -200,7 +200,7 @@ Promise.all(idFetch)
       let lastName = document.getElementById('lastName').value;
       let address = document.getElementById('address').value;
       let city = document.getElementById('city').value;
-      let emailInput = document.getElementById('email').value;
+      let email = document.getElementById('email').value;
 
         // Function to validate email
   function validateEmail(email) {
@@ -209,39 +209,47 @@ Promise.all(idFetch)
     return emailRegex.test(email);
   }
 
-   {
-    const email = emailInput.trim();
-    if (validateEmail(email)) {
-      emailInput.classList.remove("invalid");
+   
+    const emailInput = email.trim();
+    if (validateEmail(emailInput)) {
       emailErrorMsg.textContent = "";
     } else {
-      emailInput.classList.add("invalid");
       emailErrorMsg.textContent = "Please enter a valid email address.";
+      return false;
     }
-  }
+  
       
       if (firstName.trim() === "" && lastName.trim() === "" && address.trim() === "" && city.trim() === "") {
         firstNameError.innerHTML = "Please enter your first name";
         lastNameError.innerHTML = "Please enter your last name";
         addressError.innerHTML = "Please enter your address";
         cityError.innerHTML = "Please enter your city";
-        emailError.innerHTML = "Please enter a valid email";
         return false;
       }
      
-      return true;
+      return submitForm({firstName, lastName, address, city, email});
 
       
     }
     
     orderBtn.addEventListener('click', validateForm);
 
+    function submitForm(contact){
+      fetch("http://localhost:3000/api/order", {
+      method: "POST",
+      body: JSON.stringify({contact, products:getCart().map(p => p._id)}),
+      headers: {"Content-Type": 'application/json', Accept: 'application/json'}
+      }).catch(e => {console.log(e)})
+    }
+    
     //const formData = new FormData(this);
 
     //fetch(this.action, {
     //  method: this.method,
     //  body: formData
     //})
+
+
 
 
     

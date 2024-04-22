@@ -82,7 +82,7 @@ Promise.all(idFetch)
   //returns array of data responses
   .then((response) => {
     //make empty object
-   
+
     //saving a reference to each of the response datas onto the library, reference response without iterating response itself
     for (let i = 0; i < response.length; i += 1) {
       library[response[i]._id] = response[i];
@@ -120,13 +120,7 @@ Promise.all(idFetch)
       `;
 
       cartItemContainer.innerHTML += cartItems;
-
-    
-
-  }
-  
-  
-
+    }
 
     let deleteButton = document.querySelectorAll(
       ".cart__item__content__settings__delete"
@@ -134,26 +128,23 @@ Promise.all(idFetch)
 
     const quantityInputs = document.querySelectorAll(".itemQuantity");
 
-     // remove nearest article with cart__item class to click event
-     deleteButton.forEach((btn) => {
+    // remove nearest article with cart__item class to click event
+    deleteButton.forEach((btn) => {
       btn.addEventListener("click", deleteItem);
     });
 
     //update cart function
-   
 
     // Attach event listener to quantity inputs
-    
+
     quantityInputs.forEach((input) => {
       input.addEventListener("change", updateCartItemQuantity);
     });
 
-   
-
     //function to iterate over the cart array to get total of all items price in cart
     function calculateTotalAmount() {
       let total = 0;
-    
+
       // Iterate through the cart array
       for (let i = 0; i < cart.length; i++) {
         // Add the price of each item multiplied by its quantity to the total
@@ -161,99 +152,122 @@ Promise.all(idFetch)
         const { price } = library[id] || {}; // Fetch the price from the library
         total += price * quantity;
       }
-    
+
       return total;
     }
-//function to iterate over the cart array to get total quantity of items in cart
+    //function to iterate over the cart array to get total quantity of items in cart
     function calculateTotalQuantity() {
       let totalQuantity = 0;
-    
+
       // Iterate through the cart array
       for (let i = 0; i < cart.length; i++) {
         // Add the quantity of each item to the total quantity
         totalQuantity += cart[i].quantity;
       }
-    
+
       return totalQuantity;
     }
-//push function returns into html to display total number of items and price 
+    //push function returns into html to display total number of items and price
     let totalContainer = document.querySelector(".cart__price");
     let totalQuantity = `
-    <p>Total (<span id="totalQuantity"><!-- 2 -->${calculateTotalQuantity()}</span>) : €<span id="totalPrice">${calculateTotalAmount()}</span></p>
+    <p>Total (<span id="totalQuantity">${calculateTotalQuantity()}</span>) : €<span id="totalPrice">${calculateTotalAmount()}</span></p>
   `;
     totalContainer.innerHTML += totalQuantity;
   });
-  let orderBtn = document.getElementById('order');
+let orderBtn = document.getElementById("order");
 
 
-  //getting error message elements from dom
-  let firstNameError = document.getElementById('firstNameErrorMsg');
-  let lastNameError = document.getElementById('lastNameErrorMsg');
-  let addressError = document.getElementById('addressErrorMsg');
-  let cityError = document.getElementById('cityErrorMsg');
-  let emailError = document.getElementById('emailErrorMsg');
 
 
-  function validateForm(e) {
-    e.preventDefault();
-      let firstName = document.getElementById('firstName').value;
-      let lastName = document.getElementById('lastName').value;
-      let address = document.getElementById('address').value;
-      let city = document.getElementById('city').value;
-      let email = document.getElementById('email').value;
+//getting error message elements from dom
+let firstNameError = document.getElementById("firstNameErrorMsg");
+let lastNameError = document.getElementById("lastNameErrorMsg");
+let addressError = document.getElementById("addressErrorMsg");
+let cityError = document.getElementById("cityErrorMsg");
+let emailError = document.getElementById("emailErrorMsg");
 
-        // Function to validate email
+
+
+function validateForm(e) {
+  e.preventDefault();
+  //getting form values from DOM
+  let firstName = document.getElementById("firstName").value;
+let lastName = document.getElementById("lastName").value;
+let address = document.getElementById("address").value;
+let city = document.getElementById("city").value;
+let email = document.getElementById("email").value;
+
+
+  // Function to validate email
   function validateEmail(email) {
     // Regular expression for email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
 
-   
-    const emailInput = email.trim();
+  const emailInput = email.trim();
 
-    if (validateEmail(emailInput)) {
-      emailErrorMsg.textContent = "";
-    } else {
-      emailErrorMsg.textContent = "Please enter a valid email address.";
-      return false;
-    }
-  
-      
-      if (firstName.trim() === "" && lastName.trim() === "" && address.trim() === "" && city.trim() === "") {
-        firstNameError.innerHTML = "Please enter your first name";
-        lastNameError.innerHTML = "Please enter your last name";
-        addressError.innerHTML = "Please enter your address";
-        cityError.innerHTML = "Please enter your city";
-        return false;
-      }
-      
-      return submitForm({firstName, lastName, address, city, email});
-      
-    }
-    
-    orderBtn.addEventListener('click', validateForm);
-
-    function submitForm(contact) {
-      let redirectUrl = 'http://127.0.0.1:5500/front/html/confirmation.html';
-    
-      fetch("//localhost:3000/api/products/order", {
-  method: "POST",
-  body: JSON.stringify({ contact, products: getCart().map(p => p.id) }),
-  headers: { "Content-Type": "application/json", Accept: "application/json" },
-  redirect: "follow"
-}).then(response => {
-  if (response.redirected) {
-    
-  } else if (response.status === 201) {
-    // Redirect after successful order creation
-    window.location.href = redirectUrl;
+  if (validateEmail(emailInput)) {
+    emailErrorMsg.textContent = "";
   } else {
-    return response.json(); // handle response normally
+    emailErrorMsg.textContent = "Please enter a valid email address.";
+    return false;
   }
-})
-.catch(error => {
-  console.error('Error:', error);
-});
-    
-} 
+
+  if (
+    firstName.trim() === "" &&
+    lastName.trim() === "" &&
+    address.trim() === "" &&
+    city.trim() === ""
+  ) {
+    firstNameError.innerHTML = "Please enter your first name";
+    lastNameError.innerHTML = "Please enter your last name";
+    addressError.innerHTML = "Please enter your address";
+    cityError.innerHTML = "Please enter your city";
+    return false;
+  }
+
+  return submitForm({ firstName, lastName, address, city, email });
+}
+
+orderBtn.addEventListener("click", validateForm);
+
+
+//function to hold fetch request to post payload
+function submitForm(contact) {
+  let redirectUrl = "http://127.0.0.1:5500/front/html/confirmation.html";
+  fetch("//localhost:3000/api/products/order", {
+    method: "POST",
+    body: JSON.stringify({ contact, products: getCart().map((p) => p.id) }),
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    redirect: "follow",
+  })
+    .then((response) => {
+      if (response.redirected) {
+        // Redirect if the response is redirected
+      } else if (response.status === 201) {
+        // Redirect after successful order creation
+        return response.json();
+      } else {
+        // Handle other response statuses
+        return response.json().then((data) => {
+          // Handle error response
+          console.error("Error:", data);
+        });
+      }
+    })
+    .then((data) => {
+      // Access orderId from the response data
+      const orderId = data.orderId;
+      // set orderId element into localstorage to pull on confirmation page
+      localStorage.setItem("orderId", orderId);
+      console.log("Order ID:", orderId);
+      // Redirect to confirmation page
+      window.location.href = redirectUrl;
+      //empty cart after submission -- will the data be empty if we empty cart here?
+      localStorage.setItem("cart", JSON.stringify([]));
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
